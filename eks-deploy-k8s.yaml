@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: packersmovers
+  name: packersmovers
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: packersmovers
+  template:
+    metadata:
+      labels:
+        app: packersmovers
+    spec:
+      containers:
+      - name: my-packers-movers
+        image: 121607318049.dkr.ecr.ap-south-1.amazonaws.com/eks-registry:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8081
+          name: http
+          protocol: TCP
+# service type loadbalancer       
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: packersmovers
+    k8s-app: packersmovers
+  name: packersmovers
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8081
+  type: LoadBalancer
+  selector:
+    app: packersmovers
